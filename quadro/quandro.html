@@ -1,0 +1,66 @@
+
+
+app = Flask(__name__)
+
+# Dados iniciais do quadro Kanban
+tarefas = [
+    {"id": 1, "titulo": "Aprender sobre APIs", "descricao": "Estudo de métodos HTTP", "status": "To Do"},
+    {"id": 2, "titulo": "Desenvolver API Kanban", "descricao": "Simular quadro Kanban com Flask", "status": "In Progress"},
+    {"id": 3, "titulo": "Testar API com Postman", "descricao": "Validar todos os métodos HTTP", "status": "Done"}
+]
+
+# Função auxiliar para gerar IDs automaticamente
+def gerar_id():
+    return max(tarefa["id"] for tarefa in tarefas) + 1 if tarefas else 1
+
+# GET: Obter todas as tarefas
+@app.route('/kanban/tarefas', methods=['GET'])
+def obter_tarefas():
+    return jsonify(tarefas)
+
+# POST: Criar uma nova tarefa
+@app.route('/kanban/tarefas', methods=['POST'])
+def adicionar_tarefa():
+    nova_tarefa = request.get_json()
+    nova_tarefa["id"] = gerar_id()
+    tarefas.append(nova_tarefa)
+    return jsonify(nova_tarefa), 201  # 201 Created
+
+# PUT: Atualizar uma tarefa pelo ID
+@app.route('/kanban/tarefas/<int:id>', methods=['PUT'])
+def atualizar_tarefa(id):
+    tarefa_atualizada = request.get_json()
+    for tarefa in tarefas:
+        if tarefa["id"] == id:
+            tarefa.update(tarefa_atualizada)  # Atualiza campos existentes
+            return jsonify(tarefa)
+    return jsonify({"erro": "Tarefa não encontrada"}), 404
+
+# DELETE: Remover uma tarefa pelo ID
+@app.route('/kanban/tarefas/<int:id>', methods=['DELETE'])
+def deletar_tarefa(id):
+    global tarefas
+    tarefas = [tarefa for tarefa in tarefas if tarefa["id"] != id]
+    return jsonify({"mensagem": "Tarefa removida com sucesso"}), 204  # 204 No Content
+
+# Iniciar o servidor
+if __name__ == '__main__':
+    app.run(debug=True)
+
+    {
+        "titulo": "Reunião de projeto",
+        
+       
+      "descricao": "Discutir escopo e metas",
+        "status": "To Do"
+      }
+
+
+
+      {
+        "titulo": "API atualizada",
+        
+       
+      "descricao": "API Kanban com ajustes",
+        "status": "In Progress"
+      }
